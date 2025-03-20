@@ -13,7 +13,7 @@
             <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
            <h1></h1>
                 <div class="flex flex-col gap-4 lg:w-1/2">
-                    <h1 class="text-2xl lg:text-3xl font-bold">Welcome to your Laravel Jetstream application!</h1>
+                    <h1 class="text-2xl lg:text-3xl font-bold">welcome to your Laravel Jetstream application!</h1>
                     <p class="text-[#6b6b6b] dark:text-[#a8a8a8]">Laravel Jetstream is designed using Tailwind CSS and offers your choice of Livewire or Inertia scaffolding.</p>
                 </div>
             </main>
