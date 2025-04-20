@@ -12,8 +12,12 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                 brand: '#1F2937'
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                aboreto: ['Aboreto', 'cursive'],
+                productsans: ['"Product Sans"', 'sans-serif'],
             },
         },
     },
