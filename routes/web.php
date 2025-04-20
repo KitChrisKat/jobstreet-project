@@ -2,7 +2,12 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Support\Facades\Auth;
 
+Auth::routes();
+
+Route::post('/register', [RegisteredUserController::class, 'register']);
 Route::get('/', function () {
     return view('welcome');
 });
