@@ -3,15 +3,24 @@
 
 <body>
 
-<h1 class="text-3xl font-bold text-center text-gray-800">Welcome Back to MySite 🚀</h1>
+<h1 class="text-3xl font-bold text-center text-gray-800">Login</h1>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Role Selection -->
         <div>
+            <x-input-label for="role" :value="__('Role')" />
+            <select name="role" id="role" class="block mt-1 w-full" required>
+                <option value="applicant">Applicant</option>
+                <option value="employer">Employer</option>
+            </select>
+        </div>
+
+        <!-- Email Address -->
+        <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -48,6 +57,7 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        
     </form>
 </body>
 </x-guest-layout>

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Applicant;
+use App\Models\Employers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function showRegisterForm(): View
     {
         return view('auth.register');
     }
@@ -29,22 +30,48 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        if ($request->role === 'applicant') {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:applicants,email',
+                'password' => 'required|confirmed|min:8',
+                'gender' => 'required|string',
+                'birthday' => 'required|date',
+                'age' => 'required|integer',
+                'address' => 'required|string',
+                'phone' => 'required|string',
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            Applicant::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'gender' => $request->gender,
+                'birthday' => $request->birthday,
+                'age' => $request->age,
+                'address' => $request->address,
+                'phone' => $request->phone,
+            ]);
+        } elseif ($request->role === 'employer') {
+            $request->validate([
+                'employer_name' => 'required|string|max:255',
+                'company_name' => 'required|string|max:255',
+                'company_password' => 'required|confirmed|min:8',
+                'company_email' => 'required|email|unique:employers,company_email',
+                'location' => 'required|string',
+            ]);
 
-        event(new Registered($user));
+            Employers::create([
+                'employer_name' => $request->name,
+                'company_name' => $request->company_name,
+                'employer_password' => Hash::make($request->password),
+                'company_email' => $request->company_email,
+                'location' => $request->location,
+            ]);
+        } else {
+            return back()->withErrors(['role' => 'Please select a valid role.']);
+        }
 
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 }

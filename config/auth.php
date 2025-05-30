@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -36,9 +35,13 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'applicant' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'applicants',
+        ],
+        'employer' => [
+            'driver' => 'session',
+            'provider' => 'employers',
         ],
     ],
 
@@ -60,15 +63,15 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'applicants' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\Applicant::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'employers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Employers::class,
+        ],
     ],
 
     /*
@@ -91,9 +94,15 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+        'applicants' => [
+            'provider' => 'applicants',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'employers' => [
+            'provider' => 'employers',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],
@@ -111,5 +120,4 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-
 ];

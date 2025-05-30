@@ -8,11 +8,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 overflow-x-hidden">
-
-<nav class="bg-[#010066] text-white" x-data="{ open: false }">
+    <!-- Navigation Bar -->
+<nav class="bg-[#010066] text-white" style="position: sticky; top: 0; z-index: 50;" x-data="{ open: false }">
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-    
-    <!-- Logo -->
+ 
+  <!-- Logo -->
     <a href="{{ url('/') }}" class="flex items-center space-x-2">
       <img src="{{ asset('images/mainlogo.png') }}" alt="Logo" class="h-12 w-auto">
       <span class="text-xl font-aboreto">Bataan JobStreet</span>
@@ -28,64 +28,90 @@
     </button>
 
     <!-- Desktop Menu -->
-    <div class="hidden md:flex space-x-6 items-center">
+    <div class="hidden md:flex flex-1 justify-center space-x-6 items-center mx-4">
       <a href="#" class="hover:underline">Home</a>
       <a href="#" class="hover:underline">Jobs</a>
       <a href="#" class="hover:underline">About</a>
       <a href="#" class="hover:underline">Contact</a>
       <a href="#" class="hover:underline">Career</a>
-     
-      <a href="{{ route('login') }}" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg">Login</a>
-    <a href="{{ route('register') }}" class="px-4 py-2 bg-white text-[#010066] rounded-lg">Register</a>
-  </div>
+    </div>
+  <!-- Authentication Links -->
+  <div class="hidden md:flex space-x-4 mx-4">
+    @php
+        $applicant = Auth::guard('applicant')->user();
+        $employer = Auth::guard('employer')->user();
+    @endphp
+
+    @if(!$applicant && !$employer)
+        <!-- Show Login/Register links -->
+        <a href="{{ route('login') }}" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg">Login</a>
+        <a href="{{ route('register') }}" class="px-4 py-2 bg-white text-[#010066] rounded-lg">Register</a>
+    @else
+        <!-- Show Logout button -->
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <input type="hidden" name="role" value="{{ $applicant ? 'applicant' : 'employer' }}">
+            <button type="submit" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg text-white">
+                Logout
+            </button>
+        </form>
+    @endif
+</div>
   </div>
 
   <!-- Mobile Dropdown Menu -->
-  <div x-show="open" class="md:hidden bg-[#010066] px-6 pb-4 space-y-2">
-    <a href="#" class="block hover:underline">Home</a>
-    <a href="#" class="block hover:underline">Jobs</a>
-    <a href="#" class="block hover:underline">About</a>
-    <a href="#" class="block hover:underline">Contact</a>
-    <a href="#" class="block hover:underline">Career</a>
+<div x-show="open" x-transition class="md:hidden bg-[#010066] px-6 pb-4 space-y-2">
+    <a href="#" class="block text-white hover:bg-[#002080] px-4 py-2 rounded-lg">Home</a>
+    <a href="#" class="block text-white hover:bg-[#002080] px-4 py-2 rounded-lg">Jobs</a>
+    <a href="#" class="block text-white hover:bg-[#002080] px-4 py-2 rounded-lg">About</a>
+    <a href="#" class="block text-white hover:bg-[#002080] px-4 py-2 rounded-lg">Contact</a>
+    <a href="#" class="block text-white hover:bg-[#002080] px-4 py-2 rounded-lg">Career</a>
     <div class="flex flex-col space-y-2 mt-4">
-    <a href="{{ route('login') }}" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg text-center">Login</a>
-    <a href="{{ route('register') }}" class="px-4 py-2 bg-white text-[#010066] rounded-lg text-center">Register</a>
-  </div>
-</nav>
-      <!-- <button class="hover:text-gray-300">Menu</button>
-      <div class="absolute left-0 mt-2 hidden group-hover:block bg-white text-black rounded shadow-lg py-2 w-40 z-10">
-        <a href="/" class="block px-4 py-2 hover:bg-gray-200">Home</a>
-        <a href="/jobs" class="block px-4 py-2 hover:bg-gray-200">Jobs</a>
-        <a href="/about" class="block px-4 py-2 hover:bg-gray-200">About</a>
-        <a href="/contact" class="block px-4 py-2 hover:bg-gray-200">Contact</a>
-      </div>
+        @php
+            $applicant = Auth::guard('applicant')->user();
+            $employer = Auth::guard('employer')->user();
+        @endphp
+
+        @if(!$applicant && !$employer)
+            <a href="{{ route('login') }}" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg text-center">Login</a>
+            <a href="{{ route('register') }}" class="px-4 py-2 bg-white text-[#010066] rounded-lg text-center">Register</a>
+        @else
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg text-center text-white">
+                    Logout
+                </button>
+            </form>
+        @endif
     </div>
-           <div>
-               <a href="{{ route('login') }}" class="px-4 py-2 bg-[#010066] border-2 border-white rounded-lg">Login</a>
-               <a href="{{ route('register') }}" class="px-4 py-2 bg-white text-[#010066] rounded-lg">Sign Up</a>
-           </div>
-        </div> 
+</div>
+</nav>
+
     <!-- Hero Section -->
-   <section class="bg-gray-400 px-20 pt-10">
-  <div class="grid grid-cols-1 md:grid-cols-2">
-    
+<section class="relative bg-gray-400 px-6 md:px-20 pt-10">
+  <!-- Background Image -->
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/background.png') }}'); opacity: 0.3;"></div>
+
+  <!-- Content Overlay -->
+  <div class="relative z-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Text Content -->
-    <div class="text-left md:text-left flex flex-col justify-center items-start px-6">
-      <h1 class="text-4xl md:text-6xl font-semibold text-black leading-tight">
+    <div class="text-center md:text-left flex flex-col justify-center items-center md:items-start px-6">
+      <h1 class="text-6xl md:text-8xl font-semibold text-black leading-tight">
         Find Your Dream<br>
         Job here in Bataan!
       </h1>
-      <p class="mt-4 text-lg text-black max-w-md mx-auto md:mx-0">
+      <p class="my-4 text-base md:text-lg text-black max-w-md">
         Explore top job opportunities near you. Connect with the best companies. Start your career today!
       </p>
-   </div>
-      <!-- Call to Action Button -->
-    <div class="justify-center items-bottom px-6 pt-10">
-      <img src="{{ asset('images/subject.png') }}" alt="subject" class="object-contain">
+    </div>
+
+    <!-- Image Content -->
+    <div class="flex justify-center items-center px-6 md:mt-6 lg:mt-0">
+      <img src="{{ asset('images/subject.png') }}" alt="subject" class="object-contain w-3/4 md:w-1/2 lg:w-auto">
+    </div>
   </div>
-</div>
-        
 </section>
+
     <!-- Features Section -->
     <section class="container mx-auto py-16 px-6">
         <h2 class="text-3xl font-bold text-center">Why Choose Us?</h2>
@@ -107,7 +133,45 @@
             </div>
         </div>
     </section>
-
+    <section class="mx-auto py-16 px-6 bg-gray-400">
+    <h2 class="text-3xl font-bold text-center mb-8">Our Partners</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-11 gap-4">
+        <!-- Replace these with your actual logo image paths -->
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/abucay-logo.png') }}" alt="Partner 1" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/bagac-logo.png') }}" alt="Partner 2" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/balanga-logo.png') }}" alt="Partner 3" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/dinalupihan-logo.png') }}" alt="Partner 4" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/limay-logo.png') }}" alt="Partner 5" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/mariveles-logo.png') }}" alt="Partner 6" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/morong-logo.png') }}" alt="Partner 7" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/pilar-logo.png') }}" alt="Partner 8" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/orani-logo.png') }}" alt="Partner 9" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/orion-logo.png') }}" alt="Partner 10" class="object-contain h-25 w-auto">
+        </div>
+        <div class="flex justify-center items-center bg-white p-1 rounded-lg shadow-md">
+            <img src="{{ asset('images/hermosa-logo.png') }}" alt="Partner 11" class="object-contain h-25 w-auto">
+        </div>
+    </div>
+</section>
     <!-- Footer -->
     <footer class="bg-gray-900 text-white text-center py-6 mt-12">
         <p>&copy; 2025 JobStreet for Students. All rights reserved.</p>

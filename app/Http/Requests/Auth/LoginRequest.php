@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-
 class LoginRequest extends FormRequest
 {
     /**
@@ -41,15 +40,19 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $guard = $this->role ?? 'applicant'; // default to applicant if not set
+
+        if (Auth::guard($guard)->attempt(['email' => $this->email, 'password' => $this->password])) {
+            RateLimiter::clear($this->throttleKey());
+            // No return here, just authentication
+        } else {
+            // Credentials do not match
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
-
-        RateLimiter::clear($this->throttleKey());
     }
 
     /**
